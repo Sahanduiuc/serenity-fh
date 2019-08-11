@@ -24,8 +24,6 @@ using cloudwall::core::marketdata::CurrencyPair;
 using cloudwall::core::marketdata::RawFeedMessage;
 
 int main(int argc, const char *argv[]) {
-    spdlog::info("Coinbase Pro feed handler <READY>");
-
     auto ccy_pair = CurrencyPair(Currency("BTC"), Currency("USD"));
     std::list<Channel> channels({
             Channel("status", { }),
@@ -36,8 +34,10 @@ int main(int argc, const char *argv[]) {
     const OnRawFeedMessageCallback& callback = [](const RawFeedMessage& msg) {
       spdlog::info("Incoming message: {}", msg.get_raw_json());
     };
+
     auto client = CoinbaseRawFeedClient(sub, callback);
     client.connect();
+    spdlog::info("Coinbase Pro feed handler <READY>");
 
     auto loop = uvw::Loop::getDefault();
 #pragma clang diagnostic push
