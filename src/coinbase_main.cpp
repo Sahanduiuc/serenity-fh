@@ -15,27 +15,53 @@
 #include <spdlog/spdlog.h>
 
 #include <cloudwall/crypto-mktdata/coinbase.h>
-#include <uvw/loop.hpp>
+#include "../capnp/serenity-fh.capnp.h"
 
-using cloudwall::coinbase::marketdata::CoinbaseRawFeedClient;
+#include <capnp/message.h>
+#include <capnp/serialize.h>
+#include <uvw/loop.hpp>
+#include <zmq.hpp>
+
+using cloudwall::coinbase::marketdata::CoinbaseEvent;
+using cloudwall::coinbase::marketdata::CoinbaseEventClient;
+using cloudwall::coinbase::marketdata::MatchEvent;
+using cloudwall::coinbase::marketdata::OnCoinbaseEventCallback;
 using cloudwall::core::marketdata::Channel;
 using cloudwall::core::marketdata::Currency;
 using cloudwall::core::marketdata::CurrencyPair;
-using cloudwall::core::marketdata::RawFeedMessage;
+using cloudwall::core::marketdata::Side;
 
 int main(int argc, const char *argv[]) {
+    zmq::context_t context (1);
+    zmq::socket_t publisher (context, ZMQ_PUB);
+    publisher.bind("tcp://*:5556");
+
     auto ccy_pair = CurrencyPair(Currency("BTC"), Currency("USD"));
     std::list<Channel> channels({
-            Channel("status", { }),
             Channel("matches", ccy_pair),
-            Channel("ticker", ccy_pair)
     });
     auto sub = Subscription(channels);
-    const OnRawFeedMessageCallback& callback = [](const RawFeedMessage& msg) {
-      spdlog::info("Incoming message: {}", msg.get_raw_json());
+    const OnCoinbaseEventCallback& callback = [&publisher](const CoinbaseEvent& event) {
+      if (CoinbaseEvent::EventType::match==event.getCoinbaseEventType()) {
+          const auto& specific = dynamic_cast<const MatchEvent&>(event);
+
+          capnp::MallocMessageBuilder message;
+          cloudwall::serenity::TradeMessage::Builder builder = message.initRoot<cloudwall::serenity::TradeMessage>();
+          builder.setPrice(specific.get_price());
+          builder.setSize(specific.get_size());
+          if (specific.get_side()==Side::buy) {
+              builder.setSide(cloudwall::serenity::Side::BUY);
+          }
+          else {
+              builder.setSide(cloudwall::serenity::Side::SELL);
+          }
+          kj::Array<capnp::word> words = messageToFlatArray(message);
+          auto bytes = words.asBytes();
+          publisher.send(bytes.begin(), bytes.size());
+      }
     };
 
-    auto client = CoinbaseRawFeedClient(sub, callback);
+    auto client = CoinbaseEventClient(sub, callback);
     client.connect();
     spdlog::info("Coinbase Pro feed handler <READY>");
 
