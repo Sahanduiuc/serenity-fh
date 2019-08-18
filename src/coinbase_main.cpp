@@ -30,6 +30,7 @@ using cloudwall::core::marketdata::Channel;
 using cloudwall::core::marketdata::Currency;
 using cloudwall::core::marketdata::CurrencyPair;
 using cloudwall::core::marketdata::Side;
+using cloudwall::serenity::TradeMessage;
 
 int main(int argc, const char *argv[]) {
     zmq::context_t context (1);
@@ -46,14 +47,15 @@ int main(int argc, const char *argv[]) {
           const auto& specific = dynamic_cast<const MatchEvent&>(event);
 
           capnp::MallocMessageBuilder message;
-          cloudwall::serenity::TradeMessage::Builder builder = message.initRoot<cloudwall::serenity::TradeMessage>();
+          TradeMessage::Builder builder = message.initRoot<TradeMessage>();
           builder.setPrice(specific.get_price());
           builder.setSize(specific.get_size());
+
+          // invert convention to match Coinbase Pro UI
           if (specific.get_side()==Side::buy) {
-              builder.setSide(cloudwall::serenity::Side::BUY);
-          }
-          else {
               builder.setSide(cloudwall::serenity::Side::SELL);
+          } else {
+              builder.setSide(cloudwall::serenity::Side::BUY);
           }
           kj::Array<capnp::word> words = messageToFlatArray(message);
           auto bytes = words.asBytes();
