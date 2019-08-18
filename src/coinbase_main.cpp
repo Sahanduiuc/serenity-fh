@@ -51,6 +51,10 @@ int main(int argc, const char *argv[]) {
           builder.setPrice(specific.get_price());
           builder.setSize(specific.get_size());
 
+          const auto& ccy_pair = specific.get_currency_pair();
+          builder.setTradedProductId(fmt::format("{0}-{1}/coinbase", ccy_pair.get_base_ccy().get_ccy_code(),
+                  ccy_pair.get_quote_ccy().get_ccy_code()));
+
           // invert convention to match Coinbase Pro UI
           if (specific.get_side()==Side::buy) {
               builder.setSide(cloudwall::serenity::Side::SELL);

@@ -13,4 +13,5 @@ struct TradeMessage {
     side @1 : Side;
     size @2 : Float64;
     price @3 : Float64;
+    tradedProductId @4 : Text;
 }

@@ -38,7 +38,7 @@ struct TradeMessage {
   class Pipeline;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(d51b77a1a5dfcf6b, 4, 0)
+    CAPNP_DECLARE_STRUCT_HEADER(d51b77a1a5dfcf6b, 4, 1)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -71,6 +71,9 @@ public:
   inline double getSize() const;
 
   inline double getPrice() const;
+
+  inline bool hasTradedProductId() const;
+  inline  ::capnp::Text::Reader getTradedProductId() const;
 
 private:
   ::capnp::_::StructReader _reader;
@@ -111,6 +114,13 @@ public:
 
   inline double getPrice();
   inline void setPrice(double value);
+
+  inline bool hasTradedProductId();
+  inline  ::capnp::Text::Builder getTradedProductId();
+  inline void setTradedProductId( ::capnp::Text::Reader value);
+  inline  ::capnp::Text::Builder initTradedProductId(unsigned int size);
+  inline void adoptTradedProductId(::capnp::Orphan< ::capnp::Text>&& value);
+  inline ::capnp::Orphan< ::capnp::Text> disownTradedProductId();
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -194,6 +204,40 @@ inline double TradeMessage::Builder::getPrice() {
 inline void TradeMessage::Builder::setPrice(double value) {
   _builder.setDataField<double>(
       ::capnp::bounded<3>() * ::capnp::ELEMENTS, value);
+}
+
+inline bool TradeMessage::Reader::hasTradedProductId() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline bool TradeMessage::Builder::hasTradedProductId() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::Text::Reader TradeMessage::Reader::getTradedProductId() const {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::get(_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline  ::capnp::Text::Builder TradeMessage::Builder::getTradedProductId() {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::get(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline void TradeMessage::Builder::setTradedProductId( ::capnp::Text::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::Text>::set(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::Text::Builder TradeMessage::Builder::initTradedProductId(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::init(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), size);
+}
+inline void TradeMessage::Builder::adoptTradedProductId(
+    ::capnp::Orphan< ::capnp::Text>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::Text>::adopt(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::Text> TradeMessage::Builder::disownTradedProductId() {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::disown(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 
 }  // namespace
