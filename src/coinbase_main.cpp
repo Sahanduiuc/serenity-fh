@@ -19,7 +19,6 @@
 
 #include <capnp/message.h>
 #include <capnp/serialize.h>
-#include <uvw/loop.hpp>
 #include <zmq.hpp>
 
 using cloudwall::coinbase::marketdata::CoinbaseEvent;
@@ -71,11 +70,7 @@ int main(int argc, const char *argv[]) {
     client.connect();
     spdlog::info("Coinbase Pro feed handler <READY>");
 
-    auto loop = uvw::Loop::getDefault();
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-    while (true) {
-        loop->run();
+    while (publisher.connected()) {
+        // continue subscribing to marketdata
     }
-#pragma clang diagnostic pop
 }

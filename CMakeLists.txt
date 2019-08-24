@@ -4,9 +4,6 @@ project(serenity-fh C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++ -lc++abi")
-
-add_compile_options("-stdlib=libc++")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -18,16 +15,17 @@ conan_cmake_run(REQUIRES boost/1.70.0@conan/stable
                          rapidjson/1.1.0@bincrafters/stable
                          rxcpp/4.1.0@bincrafters/stable
                          spdlog/1.3.1@bincrafters/stable
-                         uvw/1.15.0@skypjack/stable
                          gtest/1.8.1@bincrafters/stable
         BASIC_SETUP BUILD missing)
 
 find_package(LibCryptoMktData REQUIRED)
 find_package(IXWebSocket REQUIRED)
+find_package(OpenSSL REQUIRED)
+find_package(ZLIB REQUIRED)
 find_package(CapnProto REQUIRED)
 
 include_directories(include ${LIBCRYPTOMKTDATA_INCLUDE_DIR} ${LIBIXWEBSOCKET_INCLUDE_DIR} ${CAPNP_INCLUDE_DIRS})
-set(LIBS ${LIBS} ${CONAN_LIBS} ${LIBCRYPTOMKTDATA_LIBRARIES} ${LIBIXWEBSOCKET_LIBRARIES} ${CAPNP_LIBRARIES})
+set(LIBS ${LIBS} ${CONAN_LIBS} ${LIBCRYPTOMKTDATA_LIBRARIES} ${LIBIXWEBSOCKET_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARIES} ${CAPNP_LIBRARIES})
 
 list(REMOVE_ITEM LIBS boost_unit_test_framework)
 
