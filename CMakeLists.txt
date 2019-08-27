@@ -9,8 +9,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 include(conan.cmake)
 
+conan_add_remote(NAME bincrafters INDEX 1
+        URL https://api.bintray.com/conan/bincrafters/public-conan)
 conan_cmake_run(REQUIRES boost/1.70.0@conan/stable
                          cppzmq/4.4.1@bincrafters/stable
+                         date/2.4.1@bincrafters/stable
                          fmt/5.3.0@bincrafters/stable
                          rapidjson/1.1.0@bincrafters/stable
                          rxcpp/4.1.0@bincrafters/stable
@@ -24,7 +27,7 @@ find_package(IXWebSocket REQUIRED)
 find_package(CapnProto REQUIRED)
 
 include_directories(include ${LIBCRYPTOMKTDATA_INCLUDE_DIR} ${LIBIXWEBSOCKET_INCLUDE_DIR} ${CAPNP_INCLUDE_DIRS})
-set(LIBS ${LIBS} ${CONAN_LIBS} ${LIBCRYPTOMKTDATA_LIBRARIES} ${LIBIXWEBSOCKET_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARIES} ${CAPNP_LIBRARIES})
+set(LIBS ${LIBS} ${CONAN_LIBS} ${LIBCRYPTOMKTDATA_LIBRARIES} ${LIBIXWEBSOCKET_LIBRARIES} ${CAPNP_LIBRARIES})
 
 list(REMOVE_ITEM LIBS boost_unit_test_framework)
 
