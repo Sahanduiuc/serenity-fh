@@ -11,6 +11,8 @@ include(conan.cmake)
 
 conan_add_remote(NAME bincrafters INDEX 1
         URL https://api.bintray.com/conan/bincrafters/public-conan)
+conan_add_remote(NAME LunarWatcher INDEX 2
+        URL https://api.bintray.com/conan/oliviazoe0/conan-packages)
 conan_cmake_run(REQUIRES boost/1.70.0@conan/stable
                          cppzmq/4.4.1@bincrafters/stable
                          date/2.4.1@bincrafters/stable
@@ -19,11 +21,11 @@ conan_cmake_run(REQUIRES boost/1.70.0@conan/stable
                          rxcpp/4.1.0@bincrafters/stable
                          spdlog/1.3.1@bincrafters/stable
                          gtest/1.8.1@bincrafters/stable
+                         IXWebSocket/5.0.6@LunarWatcher/stable
                          OpenSSL/1.1.1d@conan/stable
         BASIC_SETUP BUILD missing)
 
 find_package(LibCryptoMktData REQUIRED)
-find_package(IXWebSocket REQUIRED)
 find_package(CapnProto REQUIRED)
 
 include_directories(include ${LIBCRYPTOMKTDATA_INCLUDE_DIR} ${LIBIXWEBSOCKET_INCLUDE_DIR} ${CAPNP_INCLUDE_DIRS})
