@@ -17,7 +17,6 @@ conan_cmake_run(REQUIRES boost/1.70.0@conan/stable
                          spdlog/1.3.1@bincrafters/stable
                          gtest/1.8.1@bincrafters/stable
                          OpenSSL/1.1.1d@conan/stable
-                         zlib/1.2.9@conan/stable
         BASIC_SETUP BUILD missing)
 
 find_package(LibCryptoMktData REQUIRED)
